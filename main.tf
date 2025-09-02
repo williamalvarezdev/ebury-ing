@@ -300,3 +300,69 @@ resource "aws_elasticache_replication_group" "redis" {
     Name = "microservices-redis"
   }
 }
+
+# MSK Cluster
+resource "aws_msk_cluster" "kafka" {
+  cluster_name           = "microservices-kafka"
+  kafka_version          = "3.5.1"
+  number_of_broker_nodes = 2
+
+  broker_node_group_info {
+    instance_type   = "kafka.t3.small"
+    client_subnets  = [aws_subnet.private.id]
+    security_groups = [aws_security_group.msk.id]
+    
+    storage_info {
+      ebs_storage_info {
+        volume_size = 20
+      }
+    }
+  }
+
+  encryption_info {
+    encryption_at_rest_kms_key_id = aws_kms_key.msk.arn
+    encryption_in_transit {
+      client_broker = "TLS"
+      in_cluster    = true
+    }
+  }
+
+  tags = {
+    Name = "microservices-kafka"
+  }
+}
+
+# MSK Security Group
+resource "aws_security_group" "msk" {
+  name        = "msk-sg"
+  description = "Security group for MSK"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 9092
+    to_port     = 9092
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  ingress {
+    from_port   = 9094
+    to_port     = 9094
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  tags = {
+    Name = "msk-sg"
+  }
+}
+
+# KMS Key for MSK
+resource "aws_kms_key" "msk" {
+  description = "KMS key for MSK encryption"
+}
+
+resource "aws_kms_alias" "msk" {
+  name          = "alias/microservices-msk"
+  target_key_id = aws_kms_key.msk.key_id
+}
