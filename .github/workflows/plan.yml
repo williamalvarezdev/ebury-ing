@@ -36,13 +36,13 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -var-file="test.tfvars" -out=tfplan
+        run: terraform plan -var-file="test.tfvars"
 
       - name: Install Graphviz
-        run: sudo apt-get update && sudo apt-get install -y graphviz
+        run: sudo apt-get update && sudo apt-get install graphviz
 
       - name: Generate Plan Graph
-        run: TF_CLI_ARGS_graph="-no-color" terraform graph -type=plan tfplan | dot -Tpng > graph.png
+        run: terraform graph -type=plan | dot -Tpng >graph.png
 
       - name: Upload Graph
         uses: actions/upload-artifact@v4
