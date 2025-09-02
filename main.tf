@@ -245,11 +245,46 @@ resource "aws_db_instance" "postgres" {
   }
 }
 
+resource "aws_security_group" "rds" {
+  name        = "rds-sg"
+  description = "Security group for RDS"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  tags = {
+    Name = "rds-sg"
+  }
+}
+
 # ElastiCache Subnet Group
 resource "aws_elasticache_subnet_group" "main" {
   name       = "microservices-cache-subnet-group"
   subnet_ids = aws_subnet.private.id
 }
+
+resource "aws_security_group" "elasticache" {
+  name        = "elasticache-sg"
+  description = "Security group for ElastiCache"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  tags = {
+    Name = "elasticache-sg"
+  }
+}
+
 
 # ElastiCache Redis Cluster
 resource "aws_elasticache_replication_group" "redis" {
