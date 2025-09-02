@@ -40,3 +40,12 @@ jobs:
         
       - name: Terraform Plan 
         run: terraform plan -var-file="test.tfvars"
+
+      - name: Plan Graph  
+        run: terraform graph -type=plan | dot -Tpng >graph.png
+        
+      - name: Upload Graph
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-graph
+          path: graph.png
