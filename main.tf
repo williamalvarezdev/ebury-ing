@@ -29,7 +29,7 @@ resource "aws_subnet" "public" {
   # Let's just add one for now, can add more later
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  availability_zone = data.aws_availability_zones.available.names[0]
 
   map_public_ip_on_launch = true
 
@@ -42,7 +42,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.10.0/24"
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  availability_zone = data.aws_availability_zones.available.names[0]
 
   tags = {
     Name = "private-subnet"
