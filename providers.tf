@@ -8,6 +8,7 @@ terraform {
   }
   backend "s3" {
     bucket = "ebury-terraform-state-prod"
+    key    = "eks/terraform.tfstate"
     region = "us-east-1"
   }
 }
