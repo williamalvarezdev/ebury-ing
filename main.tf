@@ -218,8 +218,7 @@ resource "aws_eks_node_group" "main" {
 # RDS Subnet Group
 resource "aws_db_subnet_group" "main" {
   name       = "microservices-db-subnet-group"
-  subnet_ids = aws_subnet.private.id
-
+  subnet_ids = [aws_subnet.private.id]
   tags = {
     Name = "microservices-db-subnet-group"
   }
@@ -265,7 +264,7 @@ resource "aws_security_group" "rds" {
 # ElastiCache Subnet Group
 resource "aws_elasticache_subnet_group" "main" {
   name       = "microservices-cache-subnet-group"
-  subnet_ids = aws_subnet.private.id
+  subnet_ids = [aws_subnet.private.id]
 }
 
 resource "aws_security_group" "elasticache" {
