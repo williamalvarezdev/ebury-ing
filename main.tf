@@ -320,7 +320,7 @@ resource "aws_msk_cluster" "kafka" {
   }
 
   encryption_info {
-    encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
+    encryption_at_rest_kms_key_arn = aws_kms_key.msk.arn
   }
 
   tags = {
