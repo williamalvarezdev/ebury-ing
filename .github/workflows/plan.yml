@@ -38,14 +38,14 @@ jobs:
       - name: Terraform Format
         run: terraform fmt
         
-      - name: Terraform Plan 
-        run: terraform plan -var-file="test.tfvars"
-        
+      - name: Terraform Plan
+        run: terraform plan -var-file="test.tfvars" -out=tfplan
+
       - name: Install Graphviz
         run: sudo apt-get update && sudo apt-get install -y graphviz
 
-      - name: Plan Graph  
-        run: terraform graph -type=plan | dot -Tpng >graph.png
+      - name: Plan Graph
+        run: terraform graph -type=plan tfplan | dot -Tpng > graph.png
 
       - name: Upload Graph
         uses: actions/upload-artifact@v4
