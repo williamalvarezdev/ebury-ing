@@ -159,9 +159,9 @@ resource "aws_security_group" "eks_cluster" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = [aws_vpc.main.cidr_block]
   }
 
@@ -212,4 +212,57 @@ resource "aws_eks_node_group" "main" {
     aws_iam_role_policy_attachment.eks_cni_policy,
     aws_iam_role_policy_attachment.eks_container_registry_policy,
   ]
+}
+
+
+# RDS Subnet Group
+resource "aws_db_subnet_group" "main" {
+  name       = "microservices-db-subnet-group"
+  subnet_ids = aws_subnet.private.id
+
+  tags = {
+    Name = "microservices-db-subnet-group"
+  }
+}
+
+# RDS Instance
+resource "aws_db_instance" "postgres" {
+  allocated_storage      = 20
+  identifier             = "microservices-postgres"
+  engine                 = "postgres"
+  engine_version         = "8.0"
+  instance_class         = "db.t2.micro"
+  max_allocated_storage  = 100
+  storage_encrypted      = true
+  db_name                = "microservices"
+  username               = var.db_username
+  password               = var.db_password
+  vpc_security_group_ids = [aws_security_group.rds.id]
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+
+  tags = {
+    Name = "microservices-postgres"
+  }
+}
+
+# ElastiCache Subnet Group
+resource "aws_elasticache_subnet_group" "main" {
+  name       = "microservices-cache-subnet-group"
+  subnet_ids = aws_subnet.private.id
+}
+
+# ElastiCache Redis Cluster
+resource "aws_elasticache_replication_group" "redis" {
+  replication_group_id = "microservices-redis"
+  description          = "Redis cluster for microservices"
+  node_type            = "cache.t2.micro"
+  port                 = 6379
+  parameter_group_name = "default.redis3.2"
+  num_cache_clusters   = 2
+  subnet_group_name    = aws_elasticache_subnet_group.main.name
+  security_group_ids   = [aws_security_group.elasticache.id]
+
+  tags = {
+    Name = "microservices-redis"
+  }
 }

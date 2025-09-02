@@ -38,5 +38,5 @@ jobs:
       - name: Terraform Format
         run: terraform fmt
         
-      - name: Terraform Plan
-        run: terraform plan
+      - name: Terraform Plan 
+        run: terraform plan -var-file="test.tfvars"
