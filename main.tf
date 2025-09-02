@@ -320,11 +320,7 @@ resource "aws_msk_cluster" "kafka" {
   }
 
   encryption_info {
-    encryption_at_rest_kms_key_id = aws_kms_key.msk.arn
-    encryption_in_transit {
-      client_broker = "TLS"
-      in_cluster    = true
-    }
+    encryption_at_rest_kms_key_arn = aws_kms_key.kms.arn
   }
 
   tags = {
