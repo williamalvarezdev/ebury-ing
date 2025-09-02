@@ -40,6 +40,9 @@ jobs:
         
       - name: Terraform Plan 
         run: terraform plan -var-file="test.tfvars"
+        
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
 
       - name: Plan Graph  
         run: terraform graph -type=plan | dot -Tpng >graph.png
