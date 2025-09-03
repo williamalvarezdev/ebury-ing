@@ -70,7 +70,8 @@ A full graph of the services used
 
 ### Things to do:
 
-- General clean up
+- General clean up.
+- Use modules to make the components easier to read instead of a big main.tf file.
 - Add ALB in the cluster.
 - Come up with DB creds, its throwing deprecated logs right now.
 - Add environment tags to test in testing environments.
